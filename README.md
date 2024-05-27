@@ -13,14 +13,7 @@ Dates from 01/01/2020 to 30/04/2021.
 **Data Manipulation:** SQL
 
 
-
-# Data Cleaning
-
-- 
-
-# Exploratory Data Analysis
-
-- 
+  
 
 ## My notes for the future
 
