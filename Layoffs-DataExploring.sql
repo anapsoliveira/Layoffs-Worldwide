@@ -1,4 +1,4 @@
--- Exploratory Data Analysis
+-- EXPLORATORY DATA ANALYSIS
 
 SELECT *
 FROM layoffs_staging2;
@@ -101,4 +101,58 @@ FROM Company_Year
 SELECT *
 FROM Company_Year_Rank
 WHERE Ranking <= 5;
+
+
+-- Creating views for further visualization:
+
+-- Looking at companies which had 100 percent of they company laid off
+DROP VIEW IF EXISTS companies_out;
+CREATE VIEW companies_out AS
+(
+	SELECT company, industry, total_laid_off, country, funds_raised
+	FROM layoffs_staging2
+	WHERE percentage_laid_off = 1
+	ORDER BY CAST(funds_raised AS SIGNED) DESC
+);
+
+SELECT *
+FROM companies_out;
+
+-- Looking at the total laid off rolling out per country by month
+DROP VIEW IF EXISTS rolling_month;
+
+CREATE VIEW rolling_month AS
+(
+	WITH Rolling_Total AS
+	(
+	SELECT country, SUBSTRING(`date`,1,7) AS `Year-Month`, SUM(CAST(total_laid_off AS SIGNED)) AS sum_total_laid_off
+	FROM layoffs_staging2
+	WHERE total_laid_off IS NOT NULL
+    GROUP BY country, `Year-Month`
+    ORDER BY country
+	)
+	SELECT country, `Year-Month`, sum_total_laid_off
+		, SUM(sum_total_laid_off) OVER(ORDER BY `Year-Month`) AS rolling_total_layoffs
+	FROM Rolling_Total
+    ORDER BY country, `Year-Month`
+);
+
+SELECT *
+FROM rolling_month;
+
+-- Looking at the total laid off by Year, countr, company and industry
+DROP VIEW IF EXISTS layoffs_totals;
+
+CREATE VIEW layoffs_totals AS
+(
+	SELECT YEAR(`date`) AS `Year`, country , company, industry, SUM(CAST(total_laid_off AS SIGNED)) AS sum_total_laid_off
+	FROM layoffs_staging2
+	WHERE total_laid_off IS NOT NULL
+	GROUP BY `Year`, country, company, industry
+	ORDER BY `Year`, country ASC
+);
+
+SELECT *
+FROM layoffs_totals;
+
 
