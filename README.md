@@ -15,9 +15,10 @@ Dates from 01/01/2020 to 30/04/2021.
 
   
 
-## My notes for the future
+## Some notes:
 
 - It is possible to use Data Scraping to populate the null values on funds_raised column.
+- It would be nice to know the total employees that each company had so we could analyse the percentage laid off.
 
 ## Authors 👋
 
